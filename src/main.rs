@@ -54,6 +54,7 @@ fn run(source_code: &String) -> Result<(), Error> {
     let mut memory_pointer: usize = 0;
     let mut source_pointer: usize = 0;
 
+    println!(""); // Add a newline for aesthetics
     while source_pointer < source_code.len() {
         let character = source_code.chars().nth(source_pointer).unwrap();
         match character {
@@ -89,6 +90,7 @@ fn run(source_code: &String) -> Result<(), Error> {
         }
         source_pointer += 1;
     }
+    println!(""); // Add a newline for aesthetics
     return Ok(());
 }
 
@@ -152,12 +154,22 @@ fn display_lut_error(error: Error, source_code: &String) {
     }
 }
 
+fn sanitize_input(input: &String) -> String {
+    let mut sanitized_input = String::new();
+    for character in input.chars() {
+        match character {
+            '>' | '<' | '+' | '-' | '.' | ',' | '[' | ']' => sanitized_input.push(character),
+            _ => {}
+        }
+    }
+    return sanitized_input;
+}
+
 fn main() {
     let mut buffer = Vec::new();
     io::stdin().read_to_end(&mut buffer).unwrap();
     let buffer = String::from_utf8(buffer).unwrap();
-
-    println!("Read buffer: {}", buffer);
+    let buffer = sanitize_input(&buffer);
 
     let res = run(&buffer);
     if res.is_err() {
